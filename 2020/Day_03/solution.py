@@ -1,5 +1,8 @@
+from time import time
 from functools import reduce
 from operator import mul
+
+t1 = time()
 
 with open("2020/Day_03/input", "r") as f:
     trees = f.read().splitlines()
@@ -28,3 +31,5 @@ for slope in slopes:
         row += x
 
 print("Part 2:", reduce(mul, trees_hit_slopes))
+
+print("Time:", time() - t1)  # .001

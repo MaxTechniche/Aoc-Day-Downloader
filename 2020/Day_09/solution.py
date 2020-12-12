@@ -58,4 +58,4 @@ while True:
         break
 
 
-print("Time:", time() - t1)
+print("Time:", time() - t1)  # .016

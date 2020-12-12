@@ -1,6 +1,8 @@
 from time import time
 import re
 
+t1 = time()
+
 
 def flatten(lst):
     lst_copy = []
@@ -14,8 +16,6 @@ def get(number):
         return int(number)
     return 0
 
-
-t1 = time()
 
 with open("2020/Day_07/input", "r") as f:
     bag_rules = f.read().splitlines()
@@ -57,4 +57,4 @@ while True:
 
 print("Part 2:", len(shiny_contains) - shiny_contains.count("other"))
 
-print("Time:", time() - t1)
+print("Time:", time() - t1)  # .33

@@ -41,4 +41,4 @@ def get_count(adapter, bigger_adapters=None):
 
 print("Part 2:", get_count(0, lines))
 
-print("Time:", time() - t1)
+print("Time:", time() - t1)  # .0015

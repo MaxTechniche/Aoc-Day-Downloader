@@ -95,4 +95,4 @@ while True:
 
     tiles = temp
 
-print("Time:", time() - t1)
+print("Time:", time() - t1)  # 9+

@@ -62,4 +62,4 @@ while True:
             break
     pos += 1
 
-print("Time:", time() - t1)
+print("Time:", time() - t1)  # .55

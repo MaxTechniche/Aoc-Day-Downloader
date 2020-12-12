@@ -19,4 +19,4 @@ for num in range(min(seat_ids), max(seat_ids)):
         print("Part 2:", num)
         break
 
-print("Time:", time() - t1)
+print("Time:", time() - t1)  # .003

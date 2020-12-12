@@ -46,4 +46,4 @@ for pp in passports:
 
 print("Part 1:", total1)
 print("Part 2:", total2)
-print("Time:", time() - t1)
+print("Time:", time() - t1)  # .004

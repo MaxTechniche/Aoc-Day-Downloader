@@ -24,4 +24,4 @@ for password in passwords:
 
 print("Part 1:", count1)
 print("Part 2:", count2)
-print(time.time() - t1)
+print(time.time() - t1)  # .003

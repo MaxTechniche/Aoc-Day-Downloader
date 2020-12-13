@@ -16,24 +16,25 @@ def lcm(a, b):
     return abs(a * b) // math.gcd(a, b)
 
 
-bods = {}
+def get_dist(busses):
+    busses = busses[::-1]
+    bus = 1
+    step = busses[0][1]
+    check = 0
+    while bus < len(busses):
+        distance = busses[bus - 1][0] - busses[bus][0]
+        while True:
+            n = check - distance
+            # print(check, n, distance, step)
+            if n % busses[bus][1] == 0:
+                print(f"Valid order last {bus+1} busses starting at {n}")
+                break
+            check += step
+        check = n
+        step = lcm(step, busses[bus][1])
+        bus += 1
 
-
-def get_dist(left_bus, right_busses=None):
-    print()
-    print(left_bus, right_busses)
-    # print(bods)
-    if not right_busses:
-        print("[] caught")
-        return lcm(left_bus[0], left_bus[1])
-    if right_busses[0] not in bods:
-        bods[right_busses[0]] = get_dist(right_busses[0], right_busses[1:])
-
-    print(bods)
-
-    departure_distance = right_busses[0][0] - left_bus[0]
-    id = right_busses[0][1] - left_bus[1]
-    return lcm(bods[right_busses[0]], lcm(departure_distance, id))
+    return step
 
 
 with open("2020/Day_13/input") as f:
@@ -51,17 +52,14 @@ print()
 busses = [(bus, bus - (early_time % bus)) for i, bus in busses]
 busses.sort(key=lambda x: (x[1], -x[0]))
 
-print(busses)
-# next_bust = busses[]
-print(busses[0][0] * busses[0][1])
+print("Part 1:", busses[0][0] * busses[0][1])
+
+print()
+# print()
+# print(busses_p2)
 
 
-print(busses_p2)
-print(get_dist(busses_p2[0], busses_p2[1:]))
+print()
+print("Part 2:", get_dist(busses_p2))
 
-print("Time:", time() - t1)
-
-
-100000000000000
-320985598345147335600
-73757063715720
+print("Time:", time() - t1)  # .001

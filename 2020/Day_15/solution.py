@@ -26,4 +26,4 @@ while x < 30000000:
         num = 0
     x += 1
 
-print("Time:", time() - t1)
+print("Time:", time() - t1)  # 30

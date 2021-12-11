@@ -27,6 +27,7 @@ def check_neighbors(position):
                 pass
     return True, num
 
+
 for row in range(len(heightmap)):
     for col in range(len(heightmap[row])):
         val, height = check_neighbors([row, col])
@@ -38,8 +39,8 @@ print("Part 1: " + str(risk))
 
 basin_values = []
 visited = [[False for x in y] for y in heightmap]
-            
-            
+
+
 def get_basin(basin_start):
     basin = [basin_start]
     p = 0
@@ -58,14 +59,15 @@ def get_basin(basin_start):
                             basin.append((basin[p][0] + x, basin[p][1] + y))
                 except IndexError:
                     pass
-        
+
         p += 1
-        
+
     return len(basin) - 1
+
 
 for basin in basin_starts:
     basin_values.append(get_basin(basin))
-    
+
 ht = sorted(basin_values)[-3:]
 
 print("Part 2: " + str(ht[0] * ht[1] * ht[2]))

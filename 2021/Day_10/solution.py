@@ -14,11 +14,6 @@ completion_scores = []
 
 part_2_scores = {')': 1, ']': 2, '}': 3, '>': 4}
 
-# Go through the lines
-# for each line, go through each character
-# keep track of open brackets
-# if closing bracket doesn't match, then the line is corrupted
-
 brackets = {'(': ')', '[': ']', '{': '}', '<': '>'}
 
 for line in lines:
@@ -41,7 +36,7 @@ for line in lines:
             score *= 5
             score += part_2_scores[brackets[bracket]]
         completion_scores.append(score)
-    
+
 
 print("Part 1: " + str(total_syntax_score))
 

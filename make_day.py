@@ -37,7 +37,7 @@ def vac_day(day, year):
 
 
 while True:
-    year = input("Year [2020]: ") or 2020
+    year = input("Year [2021]: ") or 2021
     try:
         int(year)
         vac_year(year)

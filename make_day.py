@@ -5,7 +5,8 @@ def vac_year(year):
     if str(year) not in os.listdir():
         print(f"Year {year} not found.")
         while True:
-            create = input(f"Would you like to create year {year}? [y]/n") or "y"
+            create = input(
+                f"Would you like to create year {year}? [y]/n") or "y"
             if create == "y":
                 print("Creating year {year}...")
                 os.mkdir(str(year))
@@ -61,15 +62,20 @@ day = "Day_" + str(day).zfill(2)
 
 open("question", "w")
 open("input", "w")
+open("sample_input", "w")
 with open("solution.py", "w") as solution:
     solution.write(
         f"""from time import time
+        
+        
+def main():
+    t1 = time()
 
-t1 = time()
-
-with open("{year}/{day}/input") as f:
-    lines = f.read().splitlines()
+    with open("{year}/{day}/input") as f:
+        lines = f.read().splitlines()
+        
+    print("Time:", time() - t1)
     
-print("Time:", time() - t1)
+main()
 """
     )

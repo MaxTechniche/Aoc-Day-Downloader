@@ -20,7 +20,7 @@ font_type = 'Source Code Pro'
 font_size = window_size[0]
 tile_size = window_size[0]
 use_pygame = True
-part_2 = True
+part_2 = False
 if input_file == 'sample_input':
     font_size //= 20
     tile_size //= 10

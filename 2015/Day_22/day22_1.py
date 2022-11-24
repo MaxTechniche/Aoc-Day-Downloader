@@ -16,7 +16,7 @@ WEAPONS = 'Weapons'
 RINGS = 'Rings'
 TURNS = 'Turns'
 
-boss_input = open('day22 boss.txt').read().split('\n')
+boss_input = open('2015/Day_22day22 boss.txt').read().split('\n')
 boss = {}
 for line in boss_input:
     x, y = line.split(': ')
@@ -37,7 +37,7 @@ print(player)
 print(boss)
 
 class Game():
-    def __init__(self, player, boss, spell_permutation) -> None:
+    def __init__(self, player, boss, spell_permutation):
         global spells
         self.p_hp = player[HIT_POINTS]
         self.p_mana = player[MANA]

@@ -1,4 +1,6 @@
 from time import time, sleep
+from cProfile import run
+from timeit import timeit
 from pprint import pprint
 
 
@@ -32,7 +34,6 @@ PART_2_SAMPLE_LINES = """#############
 
 LINES = [list(line) for line in PART_2_INPUT_LINES.splitlines()]
 
-SUCCESSES = []
 LOWEST_COST = float('inf')
 COSTS = {
     'A': 1,
@@ -49,10 +50,13 @@ AM_ROOMS = {
 ILLEGAL_SPOTS = set([(1, 3), (1, 5), (1, 7), (1, 9)])
 BOARD_POSITIONS = set()
 
+NUM_LINES = len(LINES)
+ROW = 0
+COLUMN = 1
 SETS = {}
 
 
-for x in range(len(LINES)):
+for x in range(NUM_LINES):
     for y in range(len(LINES[x])):
         if LINES[x][y] in '.ABCD':
             BOARD_POSITIONS.add((x, y))
@@ -85,15 +89,10 @@ def store(ams):
 #...........#
 ###.#.#.#.###
   #.#.#.#.#
-  #########"""
-    if len(ams) > 8:
-        layout = """#############
-#...........#
-###.#.#.#.###
-  #.#.#.#.#
   #.#.#.#.#
   #.#.#.#.#
   #########"""
+    
     layout = [list(line) for line in layout.splitlines()]
     for am in ams:
         layout[am[0]][am[1]] = ams[am]
@@ -106,27 +105,25 @@ def store(ams):
 
 
 def path_is_clear(cp, np, ams):
-    row = 0
-    column = 1
-    if cp[row] > 1:
-        for x in range(1, cp[row]):
-            if (x, cp[column]) in ams:
+    if cp[ROW] > 1:
+        for x in range(1, cp[ROW]):
+            if (x, cp[COLUMN]) in ams:
                 return False
 
-    if np[row] > 1:
-        for x in range(1, np[row]+1):
-            if (x, np[column]) == cp:
+    if np[ROW] > 1:
+        for x in range(1, np[ROW]+1):
+            if (x, np[COLUMN]) == cp:
                 continue
-            if (x, np[column]) in ams:
+            if (x, np[COLUMN]) in ams:
                 return False
 
-    if np[column] < cp[column]:
-        for y in range(np[column], cp[column]):
+    if np[COLUMN] < cp[COLUMN]:
+        for y in range(np[COLUMN], cp[COLUMN]):
             if (1, y) in ams:
                 return False
 
-    elif cp[column] < np[column]:
-        for y in range(cp[column]+1, np[column]+1):
+    elif cp[COLUMN] < np[COLUMN]:
+        for y in range(cp[COLUMN]+1, np[COLUMN]+1):
             if (1, y) in ams:
                 return False
 
@@ -134,23 +131,21 @@ def path_is_clear(cp, np, ams):
 
 
 def legal_position(cp, np, ams):
-    row = 0
-    column = 1
     if np == cp:
         return False
     # Can only move into a room of its type
-    if np[row] != 1 and np[column] != AM_ROOMS[ams[cp]]:
+    if np[ROW] != 1 and np[COLUMN] != AM_ROOMS[ams[cp]]:
         return False
     # Cannot block a room
     if tuple(np) in ILLEGAL_SPOTS:
         return False
     # Can only move into or out of a room
-    if cp[row] == np[row] == 1 or cp[column] == np[column]:
+    if cp[ROW] == np[ROW] == 1 or cp[COLUMN] == np[COLUMN]:
         return False
     # Cannot block a different letter when entering its room
-    for x in range(np[row], len(LINES)):
-        if (x, np[column]) in ams:
-            if ams[(x, np[column])] in [ams[cp], '#']:
+    for x in range(np[ROW], NUM_LINES):
+        if (x, np[COLUMN]) in ams:
+            if ams[(x, np[COLUMN])] in [ams[cp], '#']:
                 continue
             return False
     return True
@@ -167,7 +162,7 @@ def locked_in(cp, ams):
     if not in_own_room(cp, ams):
         return False
 
-    for x in range(cp[0], len(LINES)):
+    for x in range(cp[0], NUM_LINES):
         if (x, cp[1]) in ams and ams[(x, cp[1])] not in [ams[cp], '#']:
             return False
 
@@ -193,7 +188,7 @@ def all_in(ams):
     return True
 
 
-def solve(ams, cost, move_set, cost_set, memo):
+def solve(ams, cost, memo):
     if store(ams) in memo:
         if cost >= memo[store(ams)]:
             return
@@ -206,38 +201,51 @@ def solve(ams, cost, move_set, cost_set, memo):
     # if cost > LOWEST_COST:
     #     return
     if all_in(ams):
-        print(LOWEST_COST, len(SUCCESSES))
-        if SUCCESSES:
-            if cost < LOWEST_COST:
-
-                SETS[cost] = (move_set, cost_set)
-                # for m, c in zip(move_set, cost_set):
-                #     print(c)
-                #     print(*m, sep='\n')
-                #     print()
-                # display(ams)
-                print(cost, len(SUCCESSES))
-                LOWEST_COST = cost
-        SUCCESSES.append(cost)
+        print(LOWEST_COST)
+        if cost < LOWEST_COST:
+            # for m, c in zip(move_set, cost_set):
+            #     print(c)
+            #     print(*m, sep='\n')
+            #     print()
+            # display(ams)
+            print(cost)
+            LOWEST_COST = cost
         return
     for cp in list(ams):
         if locked_in(cp, ams):
             continue
         for position in BOARD_POSITIONS:
-            if path_is_clear(cp, position, ams) \
-                    and legal_position(cp, position, ams):
+
+            if position == cp:
+                continue
+            # Can only move into a room of its type
+            if position[ROW] != 1 and position[COLUMN] != AM_ROOMS[ams[cp]]:
+                continue
+            # Cannot block a room
+            if tuple(position) in ILLEGAL_SPOTS:
+                continue
+            # Can only move into or out of a room
+            if cp[ROW] == position[ROW] == 1 or cp[COLUMN] == position[COLUMN]:
+                continue
+            # Cannot block a different letter when entering its room
+            okay = True
+            for x in range(position[ROW], NUM_LINES):
+                if (x, position[COLUMN]) in ams:
+                    if ams[(x, position[COLUMN])] in [ams[cp], '#']:
+                        continue
+                    okay = False
+                    break
+    
+            if not okay:
+                continue
+            if path_is_clear(cp, position, ams):
                 old_pos = cp
                 letter = ams[cp]
                 del ams[old_pos]
                 ams[position] = letter
-                move_set.append(store(ams))
-                cost_set.append(move(cp, position, ams))
-                solve(ams, cost+move(cp, position, ams),
-                      move_set, cost_set, memo)
+                solve(ams, cost+move(cp, position, ams), memo)
                 del ams[position]
                 ams[old_pos] = letter
-                move_set.pop()
-                cost_set.pop()
 
 
 def main():
@@ -252,11 +260,11 @@ def main():
 
     memo = {}
 
-    solve(ams, 0, [], [], memo)
-    print(sorted(SUCCESSES))
+    solve(ams, 0, memo)
     # display(layout)
 
     print("Time:", time() - t1)
 
 
+# run("main()")
 main()

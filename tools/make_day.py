@@ -43,6 +43,7 @@ def make_day(day, year, overwrite=False, auto=False, reset_solution=True):
     day = "Day_" + str(day).zfill(2)
 
     if overwrite is True:
+        reset_solution = True
         if day in os.listdir():
             print(f"Overwriting day {day}")
             shutil.rmtree(day)
@@ -51,10 +52,12 @@ def make_day(day, year, overwrite=False, auto=False, reset_solution=True):
 
     elif auto is True:
         if day not in os.listdir():
+            reset_solution = True
             print(f"Creating day {day}...")
             os.mkdir(day)
             print("Done")
         elif overwrite is True:
+            reset_solution = True
             print(f"Overwriting day {day}")
             shutil.rmtree(day)
             print("Done")
@@ -102,7 +105,10 @@ def make_day(day, year, overwrite=False, auto=False, reset_solution=True):
     open("sample_input", "w+").close()
 
     if reset_solution is True:
-        with open("../../tools/template.txt", "r") as template:
+        # opent template
+        print(os.getcwd())
+        print(sys.path[0])
+        with open(os.path.join(sys.path[0], "template.txt"), "r") as template:
             with open("solution.py", "w") as solution:
                 solution.write(
                     template.read().format(

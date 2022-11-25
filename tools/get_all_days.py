@@ -6,15 +6,30 @@ import sys
 import time
 import argparse
 
+from itertools import chain
 from requests import get
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-def parse(value):
-    raise NotImplementedError("TODO")
-
+def parse(value, t=None):
+    if value == 0:
+        if t == 'year':
+            value = range(2015, time.localtime().tm_year + 1)
+        elif t == 'day':
+            value = range(1, 26)
+        return value
+    for i, v in enumerate(value):
+        if "-" in v:
+            start, end = v.split("-")
+            value[i] = list(range(int(start), int(end) + 1))
+        if "," in v:
+            value[i] = list(map(int, v.strip(",").split(",")))
+        if isinstance(value[i], str):
+            value[i] = [int(value[i])]
+    value = set(chain.from_iterable(value))
+    return value
     
 
 
@@ -25,29 +40,34 @@ def get_day_info(year, day, options):
     as to ask to reduce the amount of automated request.
     Please respect this notice,
     and use this script sparingly."""
-    overwrite = options.get("overwrite", False)
-    auto = options.get(["auto"], True)
+    # overwrite = options.get("overwrite", False)
+    overwrite = False
+    # auto = options.get(["auto"], True)
+    auto = True
     get_input = options["get_input"]
     get_question = options["get_question"]
     parts = options["parts"]
     session_id = options["session_id"]
-    cookie = dict()
+    cookies = dict()
 
     if get_input is True or parts == 2:
-        cookie["session"] = session_id
+        cookies["session"] = session_id
 
+    os.chdir(os.getcwd())
     make_day.make_year(year, overwrite=overwrite, auto=auto)
+    os.chdir(str(year))
     make_day.make_day(day, year, overwrite=overwrite, auto=auto)
+    print(os.getcwd())
 
     # Get the input for the day
     question_url = f"https://adventofcode.com/{year}/day/{day}"
     input_url = question_url + "/input"
 
     if get_input is True:
-        response = get(input_url, cookie=cookie)
+        response = get(input_url, cookies=cookies)
         if response.status_code == 200:
-            with open(f"{year}/Day_{day}/input", "w") as f:
-                f.write(response.text)
+            with open("input", "w") as f:
+                f.write(response.content)
         else:
             print(f"Failed to get input for day {day}, year {year}")
             print(f"Status code: {response.status_code}")
@@ -55,10 +75,10 @@ def get_day_info(year, day, options):
 
     # Get the question for the day
     if parts == 2:
-        response = get(question_url, cookie=cookie)
+        response = get(question_url, cookies=cookies)
         if response.status_code == 200:
-            with open(f"{year}/Day_{day}/question", "w") as f:
-                f.write(response.text)
+            with open("question", "w") as f:
+                f.write(response.content)
         else:
             print(f"Failed to get question for day {day}, year {year}")
             print(f"Status code: {response.status_code}")
@@ -66,27 +86,31 @@ def get_day_info(year, day, options):
     elif get_question is True:
         response = get(question_url)
         if response.status_code == 200:
-            with open(f"{year}/Day_{day}/question", "w") as f:
-                f.write(response.text)
+            with open("question", "w") as f:
+                print(response.content)
+                f.write(response.content)
         else:
             print(f"Failed to get question for day {day}, year {year}")
             print(f"Status code: {response.status_code}")
             print(f"Reason: {response.reason}")
+    print("Done")
 
 
-def get_all_days_from_year(year):
-    pass
-
+def get_days_from_year(year, days, args):
+    for day in days:
+        print(year, day)
+        get_day_info(year, day, args)
+    
 
 def main(args):
     args = vars(args)
+    print(args)
     args["base_url"] = "https://adventofcode.com"
-    years = parse(args["years"])
-    days = parse(args["days"])
+    years = parse(args["years"], t="year")
+    days = parse(args["days"], t="day")
 
     for year in years:
-        for day in days:
-            get_day_info(year, day, args)
+        get_days_from_year(year, days, args)
 
     print("Finished getting info for all days")
 
@@ -99,39 +123,29 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="`Advent of Code` Year Grabber",
         description="Download selected `Advent of Code` days for a given year\
-             or given years.",
-        epilog="Example: python get_all_days.py 2020\
-                    (gets all days in 2020) \n\
-                Example: python get_all_days.py -a \
-                    (gets all years from 2015 to current year)\n\
-                Example: python get_all_days.py 2017, 2021 \
-                    (gets all days from 2015 and 2021)\n\
-                Example: python get_all_days.py 2017-2019 \
-                    (gets all years from 2017 to 2019)",
-        argument_default="-a",
+             or given years."
     )
     parser.add_argument(
         "-y",
         "--year",
         "--years",
         nargs="+",
-        action="extend",
         dest="years",
-        default="2015-{cur_year}".format(cur_year=cur_year),
+        default=0,
     )
     parser.add_argument(
         "-a",
         "--all",
         default=False,
         dest="all_years",
+        action="store_true",
     )
     parser.add_argument(
         "-d",
         "--days",
         nargs="+",
-        action="extend",
         dest="days",
-        default="1-25",
+        default=0,
     )
     parser.add_argument(
         "-s",
@@ -157,9 +171,10 @@ if __name__ == "__main__":
         "-p",
         "--parts",
         dest="parts",
+        type=int,
         default=1,
     )
 
-    args = parser.parse_args(sys.argv[1:])
+    args = parser.parse_args()
 
     main(args)

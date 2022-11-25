@@ -9,6 +9,7 @@ import argparse
 from itertools import chain
 from requests import get
 from dotenv import load_dotenv
+from bs4 import BeautifulSoup
 
 load_dotenv()
 
@@ -67,28 +68,22 @@ def get_day_info(year, day, options):
         response = get(input_url, cookies=cookies)
         if response.status_code == 200:
             with open("input", "w") as f:
-                f.write(response.content)
+                f.write(response.text)
         else:
             print(f"Failed to get input for day {day}, year {year}")
             print(f"Status code: {response.status_code}")
             print(f"Reason: {response.reason}")
 
     # Get the question for the day
-    if parts == 2:
-        response = get(question_url, cookies=cookies)
-        if response.status_code == 200:
-            with open("question", "w") as f:
-                f.write(response.content)
+    if get_question is True:
+        if parts == 2:
+            response = get(question_url, cookies=cookies)
         else:
-            print(f"Failed to get question for day {day}, year {year}")
-            print(f"Status code: {response.status_code}")
-            print(f"Reason: {response.reason}")
-    elif get_question is True:
-        response = get(question_url)
+            response = get(question_url)
         if response.status_code == 200:
             with open("question", "w") as f:
-                print(response.content)
-                f.write(response.content)
+                soup = BeautifulSoup(response.text, "html.parser")
+                f.write(str(soup.main))
         else:
             print(f"Failed to get question for day {day}, year {year}")
             print(f"Status code: {response.status_code}")

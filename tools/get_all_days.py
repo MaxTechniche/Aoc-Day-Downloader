@@ -43,6 +43,7 @@ def get_day_info(year, day, options):
     and use this script sparingly."""
     # overwrite = options.get("overwrite", False)
     overwrite = False
+    reset_solution = options["reset_solution"]
     # auto = options.get(["auto"], True)
     auto = True
     get_input = options["get_input"]
@@ -54,12 +55,11 @@ def get_day_info(year, day, options):
     if get_input is True or parts == 2:
         cookies["session"] = session_id
 
-    os.chdir(os.getcwd())
+    __location__ = os.getcwd()
+    os.chdir(__location__)
     make_day.make_year(year, overwrite=overwrite, auto=auto)
     os.chdir(str(year))
-    make_day.make_day(day, year, overwrite=overwrite, auto=auto)
-    print(os.getcwd())
-
+    make_day.make_day(day, year, overwrite=overwrite, auto=auto, reset_solution=reset_solution)
     # Get the input for the day
     question_url = f"https://adventofcode.com/{year}/day/{day}"
     input_url = question_url + "/input"
@@ -89,7 +89,7 @@ def get_day_info(year, day, options):
             print(f"Status code: {response.status_code}")
             print(f"Reason: {response.reason}")
     print("Done")
-
+    os.chdir(__location__)
 
 def get_days_from_year(year, days, args):
     for day in days:
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-a",
         "--all",
-        default=False,
+        default=True,
         dest="all_years",
         action="store_true",
     )
@@ -168,6 +168,12 @@ if __name__ == "__main__":
         dest="parts",
         type=int,
         default=1,
+    )
+    parser.add_argument(
+        "-r",
+        "--reset-solution",
+        dest="reset_solution",
+        action="store_true",
     )
 
     args = parser.parse_args()

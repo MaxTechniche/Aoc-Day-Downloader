@@ -39,7 +39,7 @@ def make_year(year, overwrite=False, auto=False):
                 print(f"{create} not a valid command")
 
 
-def make_day(day, year, overwrite=False, auto=False, reset_solution=True):
+def make_day(day, year, overwrite=False, auto=False, reset_solution=False):
     day = "Day_" + str(day).zfill(2)
 
     if overwrite is True:
@@ -104,16 +104,13 @@ def make_day(day, year, overwrite=False, auto=False, reset_solution=True):
 
     open("sample_input", "w+").close()
 
-    if reset_solution is True:
-        # opent template
-        print(os.getcwd())
-        print(sys.path[0])
+    if reset_solution is True or "solution.py" not in os.listdir():
+        # copy template
         with open(os.path.join(sys.path[0], "template.txt"), "r") as template:
             with open("solution.py", "w") as solution:
                 solution.write(
                     template.read().format(
                         year=year, day=day).replace("%%", "{:.3f}"))
-
 
 def get_year(year='current', auto=False):
     cur_year = time.strftime("%Y")

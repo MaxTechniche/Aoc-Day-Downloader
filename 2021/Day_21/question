@@ -1,51 +1,45 @@
---- Day 21: Dirac Dice ---
-There's not much to do as you slowly descend to the bottom of the ocean. The submarine computer challenges you to a nice game of Dirac Dice.
-
-This game consists of a single die, two pawns, and a game board with a circular track containing ten spaces marked 1 through 10 clockwise. Each player's starting space is chosen randomly (your puzzle input). Player 1 goes first.
-
-Players take turns moving. On each player's turn, the player rolls the die three times and adds up the results. Then, the player moves their pawn that many times forward around the track (that is, moving clockwise on spaces in order of increasing value, wrapping back around to 1 after 10). So, if a player is on space 7 and they roll 2, 2, and 1, they would move forward 5 times, to spaces 8, 9, 10, 1, and finally stopping on 2.
-
-After each player moves, they increase their score by the value of the space their pawn stopped on. Players' scores start at 0. So, if the first player starts on space 7 and rolls a total of 5, they would stop on space 2 and add 2 to their score (for a total score of 2). The game immediately ends as a win for any player whose score reaches at least 1000.
-
-Since the first game is a practice game, the submarine opens a compartment labeled deterministic dice and a 100-sided die falls out. This die always rolls 1 first, then 2, then 3, and so on up to 100, after which it starts over at 1 again. Play using this die.
-
-For example, given these starting positions:
-
-Player 1 starting position: 4
+<main>
+<article class="day-desc"><h2>--- Day 21: Dirac Dice ---</h2><p>There's not much to do as you slowly descend to the bottom of the ocean. The submarine computer <span title="A STRANGE GAME.">challenges you to a nice game</span> of <em>Dirac Dice</em>.</p>
+<p>This game consists of a single <a href="https://en.wikipedia.org/wiki/Dice" target="_blank">die</a>, two <a href="https://en.wikipedia.org/wiki/Glossary_of_board_games#piece" target="_blank">pawns</a>, and a game board with a circular track containing ten spaces marked <code>1</code> through <code>10</code> clockwise. Each player's <em>starting space</em> is chosen randomly (your puzzle input). Player 1 goes first.</p>
+<p>Players take turns moving. On each player's turn, the player rolls the die <em>three times</em> and adds up the results. Then, the player moves their pawn that many times <em>forward</em> around the track (that is, moving clockwise on spaces in order of increasing value, wrapping back around to <code>1</code> after <code>10</code>). So, if a player is on space <code>7</code> and they roll <code>2</code>, <code>2</code>, and <code>1</code>, they would move forward 5 times, to spaces <code>8</code>, <code>9</code>, <code>10</code>, <code>1</code>, and finally stopping on <code>2</code>.</p>
+<p>After each player moves, they increase their <em>score</em> by the value of the space their pawn stopped on. Players' scores start at <code>0</code>. So, if the first player starts on space <code>7</code> and rolls a total of <code>5</code>, they would stop on space <code>2</code> and add <code>2</code> to their score (for a total score of <code>2</code>). The game immediately ends as a win for any player whose score reaches <em>at least <code>1000</code></em>.</p>
+<p>Since the first game is a practice game, the submarine opens a compartment labeled <em>deterministic dice</em> and a 100-sided die falls out. This die always rolls <code>1</code> first, then <code>2</code>, then <code>3</code>, and so on up to <code>100</code>, after which it starts over at <code>1</code> again. Play using this die.</p>
+<p>For example, given these starting positions:</p>
+<pre><code>Player 1 starting position: 4
 Player 2 starting position: 8
-This is how the game would go:
-
-Player 1 rolls 1+2+3 and moves to space 10 for a total score of 10.
-Player 2 rolls 4+5+6 and moves to space 3 for a total score of 3.
-Player 1 rolls 7+8+9 and moves to space 4 for a total score of 14.
-Player 2 rolls 10+11+12 and moves to space 6 for a total score of 9.
-Player 1 rolls 13+14+15 and moves to space 6 for a total score of 20.
-Player 2 rolls 16+17+18 and moves to space 7 for a total score of 16.
-Player 1 rolls 19+20+21 and moves to space 6 for a total score of 26.
-Player 2 rolls 22+23+24 and moves to space 6 for a total score of 22.
-...after many turns...
-
-Player 2 rolls 82+83+84 and moves to space 6 for a total score of 742.
-Player 1 rolls 85+86+87 and moves to space 4 for a total score of 990.
-Player 2 rolls 88+89+90 and moves to space 3 for a total score of 745.
-Player 1 rolls 91+92+93 and moves to space 10 for a final score, 1000.
-Since player 1 has at least 1000 points, player 1 wins and the game ends. At this point, the losing player had 745 points and the die had been rolled a total of 993 times; 745 * 993 = 739785.
-
-Play a practice game using the deterministic 100-sided die. The moment either player wins, what do you get if you multiply the score of the losing player by the number of times the die was rolled during the game?
-
-Your puzzle answer was 678468.
-
---- Part Two ---
-Now that you're warmed up, it's time to play the real game.
-
-A second compartment opens, this time labeled Dirac dice. Out of it falls a single three-sided die.
-
-As you experiment with the die, you feel a little strange. An informational brochure in the compartment explains that this is a quantum die: when you roll it, the universe splits into multiple copies, one copy for each possible outcome of the die. In this case, rolling the die always splits the universe into three copies: one where the outcome of the roll was 1, one where it was 2, and one where it was 3.
-
-The game is played the same as before, although to prevent things from getting too far out of hand, the game now ends when either player's score reaches at least 21.
-
-Using the same starting positions as in the example above, player 1 wins in 444356092776315 universes, while player 2 merely wins in 341960390180808 universes.
-
-Using your given starting positions, determine every possible outcome. Find the player that wins in more universes; in how many universes does that player win?
-
-Your puzzle answer was 131180774190079
+</code></pre>
+<p>This is how the game would go:</p>
+<ul>
+<li>Player 1 rolls <code>1</code>+<code>2</code>+<code>3</code> and moves to space <code>10</code> for a total score of <code>10</code>.</li>
+<li>Player 2 rolls <code>4</code>+<code>5</code>+<code>6</code> and moves to space <code>3</code> for a total score of <code>3</code>.</li>
+<li>Player 1 rolls <code>7</code>+<code>8</code>+<code>9</code> and moves to space <code>4</code> for a total score of <code>14</code>.</li>
+<li>Player 2 rolls <code>10</code>+<code>11</code>+<code>12</code> and moves to space <code>6</code> for a total score of <code>9</code>.</li>
+<li>Player 1 rolls <code>13</code>+<code>14</code>+<code>15</code> and moves to space <code>6</code> for a total score of <code>20</code>.</li>
+<li>Player 2 rolls <code>16</code>+<code>17</code>+<code>18</code> and moves to space <code>7</code> for a total score of <code>16</code>.</li>
+<li>Player 1 rolls <code>19</code>+<code>20</code>+<code>21</code> and moves to space <code>6</code> for a total score of <code>26</code>.</li>
+<li>Player 2 rolls <code>22</code>+<code>23</code>+<code>24</code> and moves to space <code>6</code> for a total score of <code>22</code>.</li>
+</ul>
+<p>...after many turns...</p>
+<ul>
+<li>Player 2 rolls <code>82</code>+<code>83</code>+<code>84</code> and moves to space <code>6</code> for a total score of <code>742</code>.</li>
+<li>Player 1 rolls <code>85</code>+<code>86</code>+<code>87</code> and moves to space <code>4</code> for a total score of <code>990</code>.</li>
+<li>Player 2 rolls <code>88</code>+<code>89</code>+<code>90</code> and moves to space <code>3</code> for a total score of <code>745</code>.</li>
+<li>Player 1 rolls <code>91</code>+<code>92</code>+<code>93</code> and moves to space <code>10</code> for a final score, <code>1000</code>.</li>
+</ul>
+<p>Since player 1 has at least <code>1000</code> points, player 1 wins and the game ends. At this point, the losing player had <code>745</code> points and the die had been rolled a total of <code>993</code> times; <code>745 * 993 = <em>739785</em></code>.</p>
+<p>Play a practice game using the deterministic 100-sided die. The moment either player wins, <em>what do you get if you multiply the score of the losing player by the number of times the die was rolled during the game?</em></p>
+</article>
+<p>Your puzzle answer was <code>678468</code>.</p><article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>Now that you're warmed up, it's time to play the real game.</p>
+<p>A second compartment opens, this time labeled <em>Dirac dice</em>. Out of it falls a single three-sided die.</p>
+<p>As you experiment with the die, you feel a little strange. An informational brochure in the compartment explains that this is a <em>quantum die</em>: when you roll it, the universe <em>splits into multiple copies</em>, one copy for each possible outcome of the die. In this case, rolling the die always splits the universe into <em>three copies</em>: one where the outcome of the roll was <code>1</code>, one where it was <code>2</code>, and one where it was <code>3</code>.</p>
+<p>The game is played the same as before, although to prevent things from getting too far out of hand, the game now ends when either player's score reaches at least <code><em>21</em></code>.</p>
+<p>Using the same starting positions as in the example above, player 1 wins in <code><em>444356092776315</em></code> universes, while player 2 merely wins in <code>341960390180808</code> universes.</p>
+<p>Using your given starting positions, determine every possible outcome. <em>Find the player that wins in more universes; in how many universes does that player win?</em></p>
+</article>
+<p>Your puzzle answer was <code>131180774190079</code>.</p><p class="day-success">Both parts of this puzzle are complete! They provide two gold stars: **</p>
+<p>At this point, you should <a href="/2021">return to your Advent calendar</a> and try another puzzle.</p>
+<p>If you still want to see it, you can <a href="21/input" target="_blank">get your puzzle input</a>.</p>
+<p>You can also <span class="share">[Share<span class="share-content">on
+  <a href="https://twitter.com/intent/tweet?text=I%27ve+completed+%22Dirac+Dice%22+%2D+Day+21+%2D+Advent+of+Code+2021&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2021%2Fday%2F21&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
+<a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=I%27ve+completed+%22Dirac+Dice%22+%2D+Day+21+%2D+Advent+of+Code+2021+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2021%2Fday%2F21'}else{return false;}" target="_blank">Mastodon</a></span>]</span> this puzzle.</p>
+</main>

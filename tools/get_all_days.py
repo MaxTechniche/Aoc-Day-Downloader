@@ -13,7 +13,9 @@ load_dotenv()
 
 
 def parse(value):
-    raise NotImplementedError
+    raise NotImplementedError("TODO")
+
+    
 
 
 def get_day_info(year, day, options):
@@ -77,6 +79,7 @@ def get_all_days_from_year(year):
 
 
 def main(args):
+    args = vars(args)
     args["base_url"] = "https://adventofcode.com"
     years = parse(args["years"])
     days = parse(args["days"])
@@ -91,8 +94,7 @@ def main(args):
 if __name__ == "__main__":
     cur_year = time.strftime("%Y")
     if time.strftime("%m") != "12":
-        cur_year -= 1
-        cur_day = 25
+        cur_year = str(int(cur_year) - 1)
 
     parser = argparse.ArgumentParser(
         prog="`Advent of Code` Year Grabber",
@@ -109,14 +111,12 @@ if __name__ == "__main__":
         argument_default="-a",
     )
     parser.add_argument(
-        "year",
         "-y",
         "--year",
         "--years",
         nargs="+",
         action="extend",
         dest="years",
-        required=False,
         default="2015-{cur_year}".format(cur_year=cur_year),
     )
     parser.add_argument(
@@ -160,6 +160,6 @@ if __name__ == "__main__":
         default=1,
     )
 
-    args = parser.parse_args(sys.argv)
+    args = parser.parse_args(sys.argv[1:])
 
     main(args)

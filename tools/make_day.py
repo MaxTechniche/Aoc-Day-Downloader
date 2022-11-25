@@ -1,94 +1,159 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import time
+import shutil
 
 
-def make_year(year):
+def make_year(year, overwrite=False, auto=False):
+    year = str(year)
+    if overwrite is True:
+        if year in os.listdir():
+            print(f"Overwriting year {year}")
+            shutil.rmtree(year)
+            print("Done")
+        os.mkdir(year)
+        return
+
     if year not in os.listdir():
         print(f"Year {year} not found.")
+
+        if auto is True:
+            print(f"Creating year {year}...")
+            os.mkdir(year)
+            print("Done")
+            return
+
         while True:
-            create = input(
-                f"Would you like to create year {year}? [y]/n: ") or "y"
+            create = input(f"Create year {year}? [y]/n: ") or "y"
             if create == "y":
-                print("Creating year {year}...")
+                print(f"Creating year {year}...")
                 os.mkdir(year)
                 print("Done")
                 break
             elif create == "n":
                 print("Exiting...")
-                exit()
+                sys.exit()
             else:
                 print(f"{create} not a valid command")
 
 
-
-def make_day(day, year):
-    day = "Day_" + day.zfill(2)
-
-    if day not in os.listdir():
-        print(f"Creating {day}")
-        os.mkdir(day)
-        print(f"Done")
-        os.chdir(day)
-
-    else:
-        print(f"{day} already in {year}")
-        print("Exiting...")
-        return
-
+def make_day(day, year, overwrite=False, auto=False, reset_solution=True):
     day = "Day_" + str(day).zfill(2)
 
-    open("question", "w")
-    open("input", "w")
-    open("sample_input", "w")
-    with open("solution.py", "w") as solution:
-        solution.write(f"""
-            from time import perf_counter 
-            def main():
-                t1 = perf_counter()
+    if overwrite is True:
+        if day in os.listdir():
+            print(f"Overwriting day {day}")
+            shutil.rmtree(day)
+            print("Done")
+        os.mkdir(day)
 
-                with open("{year}/{day}/input") as f:
-                    lines = f.read().splitlines()
-                    
-                print("Time:", time() - t1)
-                
-            main()
-            """
-    )
+    elif auto is True:
+        if day not in os.listdir():
+            print(f"Creating day {day}...")
+            os.mkdir(day)
+            print("Done")
+        elif overwrite is True:
+            print(f"Overwriting day {day}")
+            shutil.rmtree(day)
+            print("Done")
+            os.mkdir(day)
+
+    elif day not in os.listdir():
+        print(f"Day {day} not found.")
+        while True:
+            create = input("Would you like to create {day}? [y]/n: ".format(
+                day=day)) or "y"
+            if create == "y":
+                print("Creating day {day}...".format(day=day))
+                os.mkdir(day)
+                print("Done")
+                break
+            elif create == "n":
+                print("Exiting...")
+                sys.exit()
+            else:
+                print("{create} not a valid command".format(create=create))
+
+    else:
+        print("{day} already in {year}".format(day=day, year=year))
+        while True:
+            create = input(
+                "Would you like to overwrite {day} {year}? [n]/YES: ".format(
+                    day=day, year=year)) or "n"
+            if create == "YES":
+                print("Overwriting day {day}...".format(day=day))
+                shutil.rmtree(day)
+                os.mkdir(day)
+                print("Done")
+                break
+            elif create == "n":
+                print("Exiting...")
+                sys.exit()
+            else:
+                print("{create} not a valid command".format(create=create))
+
+    os.chdir(day)
+
+    open("question", "w+").close()
+    open("input", "w+").close()
+
+    open("sample_input", "w+").close()
+
+    if reset_solution is True:
+        with open("../../tools/template.txt", "r") as template:
+            with open("solution.py", "w") as solution:
+                solution.write(
+                    template.read().format(
+                        year=year, day=day).replace("%%", "{:.3f}"))
 
 
+def get_year(year='current', auto=False):
+    cur_year = time.strftime("%Y")
+    if auto:
+        if year == 'current':
+            return cur_year
+        elif year == 'previous':
+            return str(int(cur_year) - 1)
+        return cur_year
 
-def get_year(current_year):
     while True:
-        year = input("Year [{current_year}]: ".format(current_year=current_year)) or current_year
+        year = input(
+            "Year [{cur_year}]: ".format(cur_year=cur_year)) or cur_year
         try:
-            if 2015 > int(year) or int(year) > int(current_year):
-                print("Year not in range (2015 - {current_year})".format(current_year=current_year))
+            if 2015 > int(year) or int(year) > int(cur_year):
+                print(
+                    "Year not in range (2015 - {cur_year})".format(
+                        cur_year=cur_year))
             else:
                 return str(year)
         except ValueError:
             print("Unable to convert year to integer. Try again.")
 
-def get_day():
+
+def get_day(auto=False):
+    if auto:
+        return time.strftime("%d")
     while True:
-        day = input("Day number: ")
+        cur_day = input("Day number: ")
         try:
-            if int(day) > 25 or int(day) < 1:
+            if int(cur_day) > 25 or int(cur_day) < 1:
                 print("Number is not in range (1-25)")
                 continue
-            return str(day)
+            return str(cur_day)
         except ValueError:
             print("Unable to convert day to integer. Try again.")
-    
+
+
 def main():
-    current_year = int(time.strftime("%Y")) - 1
-    current_month = time.strftime("%m")
+    cur_year = int(time.strftime("%Y")) - 1
+    cur_month = time.strftime("%m")
 
-    if current_month in ("11", "12"):
-        current_year += 1
+    if cur_month in ("11", "12"):
+        cur_year += 1
 
-    year = get_year(current_year)
+    year = get_year(cur_year)
     day = get_day()
 
     make_year(year)
@@ -96,6 +161,7 @@ def main():
     os.chdir(year)
 
     make_day(day, year)
+
 
 if __name__ == "__main__":
     main()

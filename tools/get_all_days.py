@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import make_day
+import make_day as make_day
+import re
 import os
 import sys
 import time
@@ -31,7 +32,6 @@ def parse(value, t=None):
             value[i] = [int(value[i])]
     value = set(chain.from_iterable(value))
     return value
-    
 
 
 def get_day_info(year, day, options):
@@ -55,10 +55,8 @@ def get_day_info(year, day, options):
     if get_input is True or parts == 2:
         cookies["session"] = session_id
 
-    __location__ = os.getcwd()
-    os.chdir(__location__)
+    os.chdir(options["output"])
     make_day.make_year(year, overwrite=overwrite, auto=auto)
-    os.chdir(str(year))
     make_day.make_day(day, year, overwrite=overwrite, auto=auto, reset_solution=reset_solution)
     # Get the input for the day
     question_url = f"https://adventofcode.com/{year}/day/{day}"
@@ -67,7 +65,7 @@ def get_day_info(year, day, options):
     if get_input is True:
         response = get(input_url, cookies=cookies)
         if response.status_code == 200:
-            with open("input", "w") as f:
+            with open(f"{year}/Day_{str(day).zfill(2)}/input", "w") as f:
                 f.write(response.text)
         else:
             print(f"Failed to get input for day {day}, year {year}")
@@ -81,15 +79,16 @@ def get_day_info(year, day, options):
         else:
             response = get(question_url)
         if response.status_code == 200:
-            with open("question", "w") as f:
+            with open(f"{year}/Day_{str(day).zfill(2)}/question", "w") as f:
                 soup = BeautifulSoup(response.text, "html.parser")
-                f.write(str(soup.main))
+                m = re.sub("<p>You can also(.|\s)*", "", str(soup.main))
+                f.write(m + "</main>")
         else:
             print(f"Failed to get question for day {day}, year {year}")
             print(f"Status code: {response.status_code}")
             print(f"Reason: {response.reason}")
     print("Done")
-    os.chdir(__location__)
+
 
 def get_days_from_year(year, days, args):
     for day in days:
@@ -100,9 +99,15 @@ def get_days_from_year(year, days, args):
 def main(args):
     args = vars(args)
     print(args)
+    __location__ = os.path.abspath(args["output"])
+    if not os.path.exists(__location__):
+        os.makedirs(__location__)
+    args["output"] = __location__
     args["base_url"] = "https://adventofcode.com"
     years = parse(args["years"], t="year")
     days = parse(args["days"], t="day")
+
+    os.chdir(__location__)
 
     for year in years:
         get_days_from_year(year, days, args)
@@ -127,13 +132,7 @@ if __name__ == "__main__":
         nargs="+",
         dest="years",
         default=0,
-    )
-    parser.add_argument(
-        "-a",
-        "--all",
-        default=True,
-        dest="all_years",
-        action="store_true",
+        help="The year(s) to get the days for. Can be a single year, a range of years, or a list of years separated by commas or spaces. Defaults to all years. (0)"
     )
     parser.add_argument(
         "-d",
@@ -141,12 +140,14 @@ if __name__ == "__main__":
         nargs="+",
         dest="days",
         default=0,
+        help="Days to get. Can be a single day, a range of days, or a list of days separated by commas and/or spaces. Defaults to all days. (0)"
     )
     parser.add_argument(
         "-s",
         "--session-id",
         dest="session_id",
         default=os.getenv("SESSION_ID"),
+        help="Your session ID from `adventofcode.com`. Needed to get input and part 2 question if you have solved part 1. Default is to use the SESSION_ID environment variable.",
     )
     parser.add_argument(
         "-i",
@@ -154,6 +155,7 @@ if __name__ == "__main__":
         "--get-input",
         dest="get_input",
         action="store_true",
+        help="Will attempt to get the input for the day (must have a valid session id).",
     )
     parser.add_argument(
         "-q",
@@ -161,6 +163,7 @@ if __name__ == "__main__":
         "--get-question",
         dest="get_question",
         action="store_true",
+        help="Will get the question for the day.",
     )
     parser.add_argument(
         "-p",
@@ -168,12 +171,21 @@ if __name__ == "__main__":
         dest="parts",
         type=int,
         default=1,
+        help="Will attempt to get the question for the day up to the given part. Defaults to 1",
     )
     parser.add_argument(
         "-r",
         "--reset-solution",
         dest="reset_solution",
         action="store_true",
+        help="Will reset the solution file for the day (if 'solution.py' exists in day).",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        dest="output",
+        default=".",
+        help="The directory to output the files to.",
     )
 
     args = parser.parse_args()

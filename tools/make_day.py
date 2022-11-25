@@ -40,6 +40,7 @@ def make_year(year, overwrite=False, auto=False):
 
 
 def make_day(day, year, overwrite=False, auto=False, reset_solution=False):
+    os.chdir(str(year))
     day = "Day_" + str(day).zfill(2)
 
     if overwrite is True:
@@ -98,7 +99,6 @@ def make_day(day, year, overwrite=False, auto=False, reset_solution=False):
                 print("{create} not a valid command".format(create=create))
 
     os.chdir(day)
-
     open("question", "w+").close()
     open("input", "w+").close()
 
@@ -111,6 +111,8 @@ def make_day(day, year, overwrite=False, auto=False, reset_solution=False):
                 solution.write(
                     template.read().format(
                         year=year, day=day).replace("%%", "{:.3f}"))
+    os.chdir("../..")
+
 
 def get_year(year='current', auto=False):
     cur_year = time.strftime("%Y")
@@ -161,7 +163,6 @@ def main():
 
     make_year(year)
     print(f"Entering year {year}")
-    os.chdir(year)
 
     make_day(day, year)
 

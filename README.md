@@ -2,5 +2,4 @@
 
 Solutions and attempts by MaxTechniche
 
-There are also a couple tools for creating a specific days folder structure and basic loading of the input file.
-Currently in the process of creating a script to download information for a specific day. (An improvement of make_day.py)
+The three files under tools can be used to make a days folder structure and request information from the site to fill in the question/input

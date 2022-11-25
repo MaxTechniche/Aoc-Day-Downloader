@@ -29,7 +29,8 @@ The three files under tools can be used to make a days folder structure and requ
 ## Usage
 
 ```shell help
-usage: `Advent of Code` Year Grabber [-h] [-y YEARS [YEARS ...]] [-d DAYS [DAYS ...]] [-s SESSION_ID] [-i] [-q]
+
+usage: get_all_days.py [-h] [-y YEARS [YEARS ...]] [-d DAYS [DAYS ...]] [-s SESSION_ID] [-i] [-q]
                                      [-p PARTS] [-r] [-o OUTPUT]
 
 Download selected `Advent of Code` days for a given year or given years.

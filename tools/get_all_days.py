@@ -41,11 +41,10 @@ def get_day_info(year, day, options):
     as to ask to reduce the amount of automated request.
     Please respect this notice,
     and use this script sparingly."""
-    # overwrite = options.get("overwrite", False)
     overwrite = False
     reset_solution = options["reset_solution"]
-    # auto = options.get(["auto"], True)
     auto = True
+    copy_template = options["copy"]
     get_input = options["get_input"]
     get_question = options["get_question"]
     parts = options["parts"]
@@ -57,7 +56,7 @@ def get_day_info(year, day, options):
 
     os.chdir(options["output"])
     make_day.make_year(year, overwrite=overwrite, auto=auto)
-    make_day.make_day(day, year, overwrite=overwrite, auto=auto, reset_solution=reset_solution)
+    make_day.make_day(day, year, overwrite=overwrite, auto=auto, options=options)
     # Get the input for the day
     question_url = f"https://adventofcode.com/{year}/day/{day}"
     input_url = question_url + "/input"
@@ -65,7 +64,7 @@ def get_day_info(year, day, options):
     if get_input is True:
         response = get(input_url, cookies=cookies)
         if response.status_code == 200:
-            with open(f"{year}/Day_{str(day).zfill(2)}/input", "w") as f:
+            with open(f"{year}/Day_{day:02d}/input.txt", "w") as f:
                 f.write(response.text)
         else:
             print(f"Failed to get input for day {day}, year {year}")
@@ -79,7 +78,7 @@ def get_day_info(year, day, options):
         else:
             response = get(question_url)
         if response.status_code == 200:
-            with open(f"{year}/Day_{str(day).zfill(2)}/question", "w") as f:
+            with open(f"{year}/Day_{day:02d}/question.html", "w") as f:
                 soup = BeautifulSoup(response.text, "html.parser")
                 m = re.sub("<p>You can also(.|\s)*", "", str(soup.main))
                 f.write(m + "</main>")
@@ -98,7 +97,6 @@ def get_days_from_year(year, days, args):
 
 def main(args):
     args = vars(args)
-    print(args)
     __location__ = os.path.abspath(args["output"])
     if not os.path.exists(__location__):
         os.makedirs(__location__)
@@ -186,6 +184,18 @@ if __name__ == "__main__":
         dest="output",
         default=".",
         help="The directory to output the files to.",
+    )
+    parser.add_argument(
+        "-c",
+        "--copy",
+        dest="copy",
+        action="store_true",
+        help="Will copy the python template.",
+    )
+    parser.add_argument(
+        "--sample-input",
+        dest="sample_input",
+        action="store_true",
     )
 
     args = parser.parse_args()

@@ -56,6 +56,9 @@ def get_day_info(year, day, options):
 
     if "output" not in options:
         options["output"] = 'aoc'
+    print(os.getcwd())
+    if "aoc" not in os.listdir():
+        os.mkdir("aoc")
     os.chdir(options["output"])
     make_day.make_year(year, overwrite=overwrite, auto=auto)
     make_day.make_day(day, year, overwrite=overwrite, auto=auto, options=options)

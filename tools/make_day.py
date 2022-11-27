@@ -39,7 +39,15 @@ def make_year(year, overwrite=False, auto=False):
                 print(f"{create} not a valid command")
 
 
-def make_day(day, year, overwrite=False, auto=False, reset_solution=False):
+def make_day(day, year, overwrite=False, auto=False, options=None):
+    if options is None:
+        options = dict()
+        options["get_input"] = False
+        options["get_question"] = False
+        options["copy"] = False
+        options["reset_solution"] = False
+        options["sample_input"] = False
+
     os.chdir(str(year))
     day = "Day_" + str(day).zfill(2)
 
@@ -52,17 +60,18 @@ def make_day(day, year, overwrite=False, auto=False, reset_solution=False):
         os.mkdir(day)
 
     elif auto is True:
-        if day not in os.listdir():
-            reset_solution = True
-            print(f"Creating day {day}...")
-            os.mkdir(day)
-            print("Done")
-        elif overwrite is True:
-            reset_solution = True
-            print(f"Overwriting day {day}")
-            shutil.rmtree(day)
-            print("Done")
-            os.mkdir(day)
+        if options['copy'] is True:
+            if day not in os.listdir():
+                reset_solution = True
+                print(f"Creating day {day}...")
+                os.mkdir(day)
+                print("Done")
+            elif overwrite is True:
+                reset_solution = True
+                print(f"Overwriting day {day}")
+                shutil.rmtree(day)
+                print("Done")
+                os.mkdir(day)
 
     elif day not in os.listdir():
         print(f"Day {day} not found.")
@@ -97,14 +106,23 @@ def make_day(day, year, overwrite=False, auto=False, reset_solution=False):
                 sys.exit()
             else:
                 print("{create} not a valid command".format(create=create))
+        options['get_question'] = True
+        options['get_input'] = True
+        options['sample_input'] = True
 
+    if day not in os.listdir():
+        os.mkdir(day)
     os.chdir(day)
-    open("question", "w+").close()
-    open("input", "w+").close()
 
-    open("sample_input", "w+").close()
+    if options['get_question'] is True:
+        open("question.html", "w+").close()
+    if options['get_input'] is True:
+        open("input.txt", "w+").close()
 
-    if reset_solution is True or "solution.py" not in os.listdir():
+    if options['sample_input'] is True:
+        open("sample_input.txt", "w+").close()
+
+    if options['reset_solution'] is True or ("solution.py" not in os.listdir() and options['copy'] is True):
         # copy template
         with open(os.path.join(sys.path[0], "template.txt"), "r") as template:
             with open("solution.py", "w") as solution:

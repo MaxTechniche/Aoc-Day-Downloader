@@ -1,7 +1,4 @@
-# Advent Of Code
-
-Solutions and attempts by MaxTechniche
-
+# Advent Of Code - Day Downloader
 The three files under tools can be used to make a days folder structure and request information from the site to fill in the question/input
 ## Setup
 
@@ -25,6 +22,8 @@ The three files under tools can be used to make a days folder structure and requ
 - Copy the `session` value
 - Set the environment variable `SESSION_ID` to the value of the session OR pass it as an argument to the script via `-s / --session-id`
 - Run the script
+
+- Or run `streamlit run streamlit_app.py`
 
 ## Usage
 

@@ -2,7 +2,6 @@ import os
 import time
 import locale
 import requests
-import get_all_days
 import streamlit as st
 
 from secrets import token_urlsafe
@@ -10,6 +9,9 @@ from zipfile import ZipFile
 from datetime import datetime
 from pytz import timezone
 from streamlit_autorefresh import st_autorefresh
+
+from get_all_days import get_day_info
+
 
 if "ST_SESSION_ID" not in st.session_state:
     st.session_state['ST_SESSION_ID'] = token_urlsafe(16)
@@ -143,15 +145,23 @@ def download_day_info(
         part=st.session_state.get("part", 1),
         session=st.session_state.get('VALID_AOC_COOKIE_SESSION', None)
     ):
-    f = get_all_days.__file__
-    i = '-i' if input_ else ''
-    q = "-q" if question else ''
-    part = ("-p " + str(part)) if part else ''
 
-    y = '-y ' + str(year)
-    d = '-d ' + str(day)
+    options = dict()
 
-    os.system(f"python3 {f} {y} {d} {i} {q} {part} -o aoc -s {session}")
+    options["get_input"] = input_
+    options["get_question"] = question
+    options["copy"] = False
+    options["reset_solution"] = False
+    options["sample_input"] = False
+    options["part"] = int(part)
+    options["session_id"] = session
+    options["output"] = "aoc"
+
+
+
+    get_day_info(year, day, options=options)
+    
+    # os.system(f"python3 {f} {y} {d} {i} {q} {part} -o aoc -s {session}")
 
 
 def retrieve_info():
@@ -165,6 +175,7 @@ def retrieve_info():
                     if st.session_state[f"{year}-{day}"]:
                         print(f"DOWNLOADING DAY {day} OF YEAR {year}")
                         download_day_info(year, day)
+                        
                         if st.session_state['get-input'] is True:
                             zip_file.write(f"aoc/{year}/Day_{day:02d}/input.txt")
                         if st.session_state["get-question"] is True:
@@ -178,7 +189,7 @@ def retrieve_info():
 
 def send_package():
     if f"{st.session_state['ST_SESSION_ID']}-aoc.zip" in os.listdir():
-        st.write("Sending zip...")
+        st.write("Zip sent.")
     else:
         st.write("No zip to send?... check with the server admin")
     del st.session_state['transmission-received']
@@ -240,7 +251,7 @@ if st.session_state['progress'] is None:
 
         if st.session_state['get-question']:
             part_txt.write("Part:")
-            part_slider.slider("", key="part", min_value=1, max_value=2, value=1, label_visibility="collapsed")
+            part_slider.slider("Progress", key="part", min_value=1, max_value=2, value=1, label_visibility="collapsed")
 
 
 if 'transmission-received' in st.session_state:

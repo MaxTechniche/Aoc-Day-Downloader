@@ -7,6 +7,7 @@ import shutil
 
 
 def make_year(year, overwrite=False, auto=False):
+    
     year = str(year)
     if overwrite is True:
         if year in os.listdir():
@@ -40,13 +41,26 @@ def make_year(year, overwrite=False, auto=False):
 
 
 def make_day(day, year, overwrite=False, auto=False, options=None):
+    
     if options is None:
         options = dict()
+
+    if "get_input" not in options:
         options["get_input"] = False
+    if "get_question" not in options:
         options["get_question"] = False
+    if "part" not in options:
+        options["part"] = 1
+    if "session_id" not in options:
+        options["session_id"] = None
+    if "copy" not in options:
         options["copy"] = False
+    if "reset_solution" not in options:
         options["reset_solution"] = False
+    if "sample_input" not in options:
         options["sample_input"] = False
+    if "output" not in options:
+        options["output"] = "."
 
     os.chdir(str(year))
     day = "Day_" + str(day).zfill(2)
@@ -130,6 +144,7 @@ def make_day(day, year, overwrite=False, auto=False, options=None):
                     template.read().format(
                         year=year, day=day).replace("%%", "{:.3f}"))
     os.chdir("../..")
+    
 
 
 def get_year(year='current', auto=False):

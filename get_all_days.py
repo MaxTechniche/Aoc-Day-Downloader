@@ -6,9 +6,9 @@ import os
 import sys
 import time
 import argparse
+import requests
 
 from itertools import chain
-from requests import get
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 
@@ -47,13 +47,15 @@ def get_day_info(year, day, options):
     copy_template = options["copy"]
     get_input = options["get_input"]
     get_question = options["get_question"]
-    parts = options["parts"]
+    part = options["part"]
     session_id = options["session_id"]
     cookies = dict()
 
-    if get_input is True or parts == 2:
+    if get_input is True or part == 2:
         cookies["session"] = session_id
 
+    if "output" not in options:
+        options["output"] = 'aoc'
     os.chdir(options["output"])
     make_day.make_year(year, overwrite=overwrite, auto=auto)
     make_day.make_day(day, year, overwrite=overwrite, auto=auto, options=options)
@@ -62,7 +64,7 @@ def get_day_info(year, day, options):
     input_url = question_url + "/input"
 
     if get_input is True:
-        response = get(input_url, cookies=cookies)
+        response = requests.get(input_url, cookies=cookies)
         if response.status_code == 200:
             with open(f"{year}/Day_{day:02d}/input.txt", "w") as f:
                 f.write(response.text)
@@ -73,10 +75,10 @@ def get_day_info(year, day, options):
 
     # Get the question for the day
     if get_question is True:
-        if parts == 2:
-            response = get(question_url, cookies=cookies)
+        if part == 2:
+            response = requests.get(question_url, cookies=cookies)
         else:
-            response = get(question_url)
+            response = requests.get(question_url)
         if response.status_code == 200:
             with open(f"{year}/Day_{day:02d}/question.html", "w") as f:
                 soup = BeautifulSoup(response.text, "html.parser")
@@ -87,6 +89,7 @@ def get_day_info(year, day, options):
             print(f"Status code: {response.status_code}")
             print(f"Reason: {response.reason}")
     print("Done")
+    os.chdir("..")
 
 
 def get_days_from_year(year, days, args):
@@ -165,8 +168,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-p",
-        "--parts",
-        dest="parts",
+        "--part",
+        dest="part",
         type=int,
         default=1,
         help="Will attempt to get the question for the day up to the given part. Defaults to 1",

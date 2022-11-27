@@ -19,7 +19,7 @@ if 'progress' not in st.session_state:
 
 # st_autorefresh(interval=1000, key="refresher")
 current_time = datetime.now(timezone('US/Eastern'))
-current_time = datetime(2019, 12, 1, 0, 0, 0, 0, timezone('US/Eastern'))
+# current_time = datetime(2019, 12, 1, 0, 0, 0, 0, timezone('US/Eastern'))
 
 year_max = current_time.year
 if current_time.month == 12:

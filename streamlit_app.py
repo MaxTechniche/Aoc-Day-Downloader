@@ -175,7 +175,7 @@ def retrieve_info():
                     if st.session_state[f"{year}-{day}"]:
                         print(f"DOWNLOADING DAY {day} OF YEAR {year}")
                         download_day_info(year, day)
-                        
+                        time.sleep(.1) # to "throttle" requests
                         if st.session_state['get-input'] is True:
                             zip_file.write(f"aoc/{year}/Day_{day:02d}/input.txt")
                         if st.session_state["get-question"] is True:

@@ -68,6 +68,7 @@ def get_day_info(year, day, options):
 
     if get_input is True:
         response = requests.get(input_url, cookies=cookies)
+        print(input_url)
         if response.status_code == 200:
             with open(f"{year}/Day_{day:02d}/input.txt", "w") as f:
                 f.write(response.text)

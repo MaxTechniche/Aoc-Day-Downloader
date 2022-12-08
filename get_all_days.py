@@ -47,7 +47,7 @@ def get_day_info(year, day, options):
     get_input = options["get_input"]
     get_question = options["get_question"]
     part = options["part"]
-    session_id = options["SESSION_ID"]
+    session_id = options["session_id"]
     cookies = dict()
 
     if get_input is True or part == 2:

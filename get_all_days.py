@@ -44,15 +44,22 @@ def get_day_info(year, day, options):
     overwrite = False
     reset_solution = options["reset_solution"]
     auto = True
+    copy_template = options["copy"]
     get_input = options["get_input"]
     get_question = options["get_question"]
     part = options["part"]
-    session_id = options["SESSION_ID"]
+    session_id = options["session_id"]
     cookies = dict()
 
     if get_input is True or part == 2:
         cookies["session"] = session_id
 
+    if "output" not in options:
+        options["output"] = 'aoc'
+    print(os.getcwd())
+    if "aoc" not in os.listdir():
+        os.mkdir("aoc")
+    os.chdir(options["output"])
     make_day.make_year(year, overwrite=overwrite, auto=auto)
     make_day.make_day(day, year, overwrite=overwrite, auto=auto, options=options)
     # Get the input for the day
@@ -86,13 +93,13 @@ def get_day_info(year, day, options):
             print(f"Status code: {response.status_code}")
             print(f"Reason: {response.reason}")
     print("Done")
+    os.chdir("..")
 
 
 def get_days_from_year(year, days, args):
     for day in days:
         print(year, day)
         get_day_info(year, day, args)
-        os.chdir(args["output"])
     
 
 def main(args):
@@ -106,7 +113,6 @@ def main(args):
     days = parse(args["days"], t="day")
 
     os.chdir(__location__)
-
 
     for year in years:
         get_days_from_year(year, days, args)
@@ -144,7 +150,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-s",
         "--session-id",
-        dest="SESSION_ID",
+        dest="session_id",
         default=os.getenv("SESSION_ID"),
         help="Your session ID from `adventofcode.com`. Needed to get input and part 2 question if you have solved part 1. Default is to use the SESSION_ID environment variable.",
     )

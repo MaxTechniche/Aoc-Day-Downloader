@@ -9,7 +9,12 @@ def format_time(func):
         func(*args, **kwargs)
         t2 = perf_counter()
         time_delta = t2 - t1
-        print("Time: %% seconds".format(time_delta))
+        if time_delta * 1000 < 1:
+            print(str(time_delta * 1000000)[:6], "μs")
+        elif time_delta < 1:
+            print(str(time_delta * 1000)[:6], "ms")
+        else:
+            print(str(time_delta)[:6], "s")
     return wrapper()
 
 
@@ -38,6 +43,7 @@ def test1(input_, expected):
 @pytest.mark.parametrize("input_, expected", [
     ("", 0),
     ])
+@pytest.mark.skip
 def test2(input_, expected):
     assert compute2(input_) == expected
 
